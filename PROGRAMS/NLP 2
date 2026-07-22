@@ -1,0 +1,31 @@
+def matches_ends_with_ab(input_string: str) -> bool:
+    current_state = "q0"
+
+    transitions = {
+        ("q0", "a"): "q1",
+        ("q0", "b"): "q0",
+        ("q1", "a"): "q1",
+        ("q1", "b"): "q2",
+        ("q2", "a"): "q1",
+        ("q2", "b"): "q0",
+    }
+
+    for char in input_string:
+        if char not in ("a", "b"):
+            return False  # Reject invalid characters outside alphabet
+        current_state = transitions[(current_state, char)]
+
+    return current_state == "q2"
+test_words = ["ab", "abaab", "aab", "abb", "ba", "a"]
+
+for word in test_words:
+    print(f"'{word}': {matches_ends_with_ab(word)}")
+
+
+OUTPUT:
+'ab': True
+'abaab': True
+'aab': True
+'abb': False
+'ba': False
+'a': False
