@@ -1,0 +1,51 @@
+import nltk
+from nltk.stem import PorterStemmer
+
+# Download the required tokenizer data
+nltk.download('punkt_tab', quiet=True)
+
+
+def stem_word_list(words: list[str]) -> None:
+    # Initialize the Porter Stemmer
+    stemmer = PorterStemmer()
+
+    print(f"{'Original Word':<20} | {'Porter Stem':<20}")
+    print("-" * 43)
+
+    for word in words:
+        stemmed = stemmer.stem(word)
+        print(f"{word:<20} | {stemmed:<20}")
+
+
+if __name__ == "__main__":
+    # Sample list of words with various suffixes
+    sample_words = [
+        "connections",
+        "connecting",
+        "connected",
+        "connection",
+        "studies",
+        "studying",
+        "relational",
+        "troubling",
+        "troubled",
+        "cats",
+    ]
+
+    stem_word_list(sample_words)
+
+
+OUTPUT:
+
+Original Word        | Porter Stem         
+-------------------------------------------
+connections          | connect             
+connecting           | connect             
+connected            | connect             
+connection           | connect             
+studies              | studi               
+studying             | studi               
+relational           | relat               
+troubling            | troubl              
+troubled             | troubl              
+cats                 | cat 
