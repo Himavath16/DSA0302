@@ -1,0 +1,60 @@
+CODE 
+import re
+def process_text_with_regex(raw_text: str) -> None:
+    """Demonstrates safe regex processing with error handling and validation."""
+    if not isinstance(raw_text, str) or not raw_text.strip():
+        print("Error: Input must be a non-empty string.")
+        return
+    print("--- RAW TEXT ---")
+    print(raw_text.strip())
+    print("-" * 40)
+    phone_pattern = re.compile(r"\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}")
+    phone_match = phone_pattern.search(raw_text)
+    if phone_match:
+        print(f"[SEARCH] First Phone Number Found : {phone_match.group()}")
+        print(f"[SEARCH] Character Index Position  : {phone_match.span()}")
+    else:
+        print("[SEARCH] No phone numbers found.")
+    email_pattern = re.compile(
+        r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+    )
+    emails = email_pattern.findall(raw_text)
+    if emails:
+        print(f"[FINDALL] Emails Extracted ({len(emails)}) : {emails}")
+    else:
+        print("[FINDALL] No emails found.")
+    ip_pattern = re.compile(r"\b\d{1,3}(?:\.\d{1,3}){3}\b")
+    masked_text = ip_pattern.sub("[HIDDEN_IP]", raw_text)
+
+    print("\n--- ANONYMIZED OUTPUT ---")
+    print(masked_text.strip())
+if __name__ == "__main__":
+    sample_text = """
+    User session initialized.
+    Contact Admin at admin.tech@company.org or support@service.io.
+    Direct Line: (800) 555-0199 or backup 555-0142.
+    Server Node IP: 192.168.1.105
+    """
+    try:
+        process_text_with_regex(sample_text)
+    except re.error as e:
+        print(f"Regex Compilation Error: {e}")
+    except Exception as e:
+        print(f"Unexpected Error: {e}")
+
+OUTPUT:
+--- RAW TEXT ---
+User session initialized.
+    Contact Admin at admin.tech@company.org or support@service.io.
+    Direct Line: (800) 555-0199 or backup 555-0142.
+    Server Node IP: 192.168.1.105
+----------------------------------------
+[SEARCH] First Phone Number Found : (800) 555-0199
+[SEARCH] Character Index Position  : (115, 129)
+[FINDALL] Emails Extracted (2) : ['admin.tech@company.org', 'support@service.io']
+
+--- ANONYMIZED OUTPUT ---
+User session initialized.
+    Contact Admin at admin.tech@company.org or support@service.io.
+    Direct Line: (800) 555-0199 or backup 555-0142.
+    Server Node IP: [HIDDEN_IP]
