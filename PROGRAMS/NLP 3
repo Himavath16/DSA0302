@@ -1,0 +1,74 @@
+import nltk
+from nltk.stem import PorterStemmer, WordNetLemmatizer
+from nltk.tokenize import word_tokenize
+
+# Automatically download required NLTK resources
+nltk.download('punkt', quiet=True)
+nltk.download('punkt_tab', quiet=True)
+nltk.download('wordnet', quiet=True)
+nltk.download('averaged_perceptron_tagger_eng', quiet=True)
+
+
+def analyze_morphology(text: str) -> None:
+    stemmer = PorterStemmer()
+    lemmatizer = WordNetLemmatizer()
+
+    # Tokenize and Tag POS
+    tokens = word_tokenize(text)
+    pos_tags = nltk.pos_tag(tokens)
+
+    print(
+        f"{'Word':<15} | {'POS Tag':<10} | {'Stem (Porter)':<15} | {'Lemma (WordNet)':<15}"
+    )
+    print("-" * 65)
+
+    for word, tag in pos_tags:
+        # Convert Treebank POS tag to WordNet format
+        wn_tag = (
+            nltk.corpus.wordnet.ADJ
+            if tag.startswith("J")
+            else (
+                nltk.corpus.wordnet.VERB
+                if tag.startswith("V")
+                else (
+                    nltk.corpus.wordnet.NOUN
+                    if tag.startswith("N")
+                    else (
+                        nltk.corpus.wordnet.ADV
+                        if tag.startswith("R")
+                        else None
+                    )
+                )
+            )
+        )
+
+        # Apply stemming and lemmatization
+        stem = stemmer.stem(word)
+        lemma = (
+            lemmatizer.lemmatize(word.lower(), pos=wn_tag)
+            if wn_tag
+            else lemmatizer.lemmatize(word.lower())
+        )
+
+        print(f"{word:<15} | {tag:<10} | {stem:<15} | {lemma:<15}")
+
+
+if __name__ == "__main__":
+    sample_text = "The study showed that better connections were established by running processes."
+    analyze_morphology(sample_text)
+
+OUTPUT : 
+Word            | POS Tag    | Stem (Porter)   | Lemma (WordNet)
+-----------------------------------------------------------------
+The             | DT         | the             | the            
+study           | NN         | studi           | study          
+showed          | VBD        | show            | show           
+that            | IN         | that            | that           
+better          | JJR        | better          | good           
+connections     | NNS        | connect         | connection     
+were            | VBD        | were            | be             
+established     | VBN        | establish       | establish      
+by              | IN         | by              | by             
+running         | VBG        | run             | run            
+processes       | NNS        | process         | process 
+
